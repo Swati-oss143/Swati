@@ -1,4 +1,16 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Swati | Digital Services & Print Portal</title><link rel="stylesheet" href="style.css"></head><body>
-<header><a class="brand" href="index.html"><b>S</b><span>Swati<small>Digital Services & Print Portal</small></span></a><nav><a href="#services">Services</a><a href="#tools">Tools</a><a href="admin.html">Admin</a></nav></header>
-<section class="hero"><div><label>ONE PORTAL • MANY SERVICES</label><h1>Professional digital, card and print services.</h1><p>New Apply • Correction • Download • Print • Manual Application Tracking</p><a class="btn green" href="#services">Explore Services</a></div><div class="hero-art"><i class="c blue">PAN</i><i class="c pink">VOTER</i><i class="c yellow">ABHA</i><i class="c red">PRINT</i><strong>SWATI</strong></div></section>
-<main><section id="services"><h2>All Services</h2><div class="grid" id="serviceGrid"></div></section><section id="tools" class="panel"><h2>Quick Tools</h2><div class="chips"><span>Passport Photo</span><span>QR Code</span><span>JPG ↔ PDF</span><span>Resume</span><span>Shadi Biodata</span><span>Self Declaration</span></div></section><section class="panel"><h2>Manual Application</h2><form id="appForm"><input id="serviceName" placeholder="Selected service" required><input placeholder="Applicant name" required><input placeholder="Mobile number" required><button class="btn green">Create Draft</button></form><p id="notice"></p></section></main><footer>© Swati • Manual service assistance</footer><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Swati Portal</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="brand">SWATI <span>Digital Service Portal</span></div><nav><a href="#home">Home</a><a href="#services">Services</a><a href="#track">Track</a><a href="#contact">Contact</a><a class="btn" href="admin.html">Admin</a></nav></header>
+<main>
+<section id="home" class="hero"><div><p class="eyebrow">FAST • SECURE • DIGITAL</p><h1>All your online services in one place.</h1><p>Apply, upload documents, receive a reference number and track your application.</p><a class="btn" href="#services">Explore Services</a></div><div class="hero-card"><b>SWATI</b><span>Online Digital Seva</span><small>Professional • Reliable • Simple</small></div></section>
+<section id="services"><h2>Popular Services</h2><div id="serviceGrid" class="grid"></div></section>
+<section id="apply" class="panel"><h2>New Application</h2><form id="applicationForm"><input id="appName" required placeholder="Applicant name"><input id="appMobile" required placeholder="Mobile number"><select id="appService" required></select><textarea id="appNote" placeholder="Notes / required details"></textarea><button class="btn" type="submit">Submit Application</button></form><p id="appResult" class="result"></p></section>
+<section id="track" class="panel"><h2>Track Application</h2><div class="inline"><input id="trackId" placeholder="Application number"><button class="btn" id="trackBtn">Track</button></div><p id="trackResult" class="result"></p></section>
+<section id="contact" class="panel"><h2>Contact</h2><p>For assistance, contact the service centre operator. This starter includes local demo tracking and can be connected to Supabase.</p></section>
+</main><footer>© 2026 Swati Portal</footer><script src="app.js"></script>
+</body></html>

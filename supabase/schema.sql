@@ -1,8 +1,35 @@
+-- Swati Portal Supabase foundation
 create extension if not exists pgcrypto;
-create table if not exists profiles(id uuid primary key references auth.users(id) on delete cascade,full_name text,role text not null default 'customer' check(role in('customer','admin','manager','operator','support')),is_active boolean not null default true,created_at timestamptz default now());
-create table if not exists categories(id uuid primary key default gen_random_uuid(),name text unique not null,slug text unique not null,is_active boolean default true,sort_order int default 0);
-create table if not exists services(id uuid primary key default gen_random_uuid(),category_id uuid references categories(id) on delete set null,name text not null,slug text unique not null,description text,apply_enabled boolean default true,correction_enabled boolean default false,download_enabled boolean default false,print_enabled boolean default true,charge numeric(10,2) default 0,is_active boolean default true,sort_order int default 0,created_at timestamptz default now(),updated_at timestamptz default now());
-create table if not exists applications(id uuid primary key default gen_random_uuid(),application_no text unique not null,user_id uuid references profiles(id) on delete set null,service_id uuid references services(id) on delete set null,applicant_name text not null,mobile text,status text default 'draft',notes text,created_at timestamptz default now(),updated_at timestamptz default now());
-create table if not exists documents(id uuid primary key default gen_random_uuid(),application_id uuid references applications(id) on delete cascade not null,file_name text not null,storage_path text not null,document_type text,is_verified boolean default false,created_at timestamptz default now());
-create table if not exists audit_logs(id uuid primary key default gen_random_uuid(),actor_id uuid references profiles(id) on delete set null,action text not null,entity_type text,entity_id uuid,metadata jsonb,created_at timestamptz default now());
-insert into categories(name,slug) values('Identity Cards','identity-cards'),('Health Cards','health-cards'),('Government Services','government-services'),('Photo & PDF Tools','photo-pdf-tools'),('Forms & Documents','forms-documents'),('Printing Services','printing-services') on conflict do nothing;
+create table if not exists public.services(
+ id uuid primary key default gen_random_uuid(),
+ name text not null,
+ description text default '',
+ category text default 'General',
+ active boolean not null default true,
+ created_at timestamptz not null default now()
+);
+create table if not exists public.applications(
+ id uuid primary key default gen_random_uuid(),
+ application_no text unique not null,
+ user_id uuid references auth.users(id) on delete set null,
+ applicant_name text not null,
+ mobile text not null,
+ service_id uuid references public.services(id) on delete set null,
+ notes text default '',
+ status text not null default 'Received',
+ created_at timestamptz not null default now(),
+ updated_at timestamptz not null default now()
+);
+create table if not exists public.profiles(
+ id uuid primary key references auth.users(id) on delete cascade,
+ full_name text,
+ role text not null default 'customer' check(role in ('customer','admin','manager','operator','support')),
+ created_at timestamptz not null default now()
+);
+alter table public.services enable row level security;
+alter table public.applications enable row level security;
+alter table public.profiles enable row level security;
+create policy if not exists "public can read active services" on public.services for select using (active=true);
+create policy if not exists "users read own applications" on public.applications for select using (auth.uid()=user_id);
+create policy if not exists "users create own applications" on public.applications for insert with check (auth.uid()=user_id);
+create policy if not exists "users read own profile" on public.profiles for select using (auth.uid()=id);

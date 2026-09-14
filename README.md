@@ -1,12 +1,11 @@
-# Swati Portal — Total Final Package
+# Swati A-to-Z Consolidated Package
 
-This package contains the Swati Print-Portal-style frontend, admin dashboard UI, multicolour theme, maintenance toggle demo, service manager demo, and consolidated Supabase schema.
+This is the consolidated Swati portal package. It includes:
+- Responsive public website
+- Service catalogue
+- Application form and local demo tracking
+- Admin dashboard foundation
+- Service manager and status update demo
+- Supabase schema with starter tables and RLS
 
-## GitHub Pages
-Upload the contents of `public/` to the repository root, then enable Settings → Pages → Deploy from branch → main → /root.
-
-## Supabase
-Run `supabase/schema.sql` in the Supabase SQL Editor. Configure Auth, private Storage buckets, RLS policies, and environment variables before production.
-
-## Important
-The included admin controls are a frontend foundation. Production authentication, server-side authorization, private document policies, real CRUD persistence, and complete CMS wiring must be connected to Supabase before handling real customer documents.
+Important: Supabase credentials, production authentication, complete CMS persistence, private Storage policies, payment gateway, deployment configuration and end-to-end production verification must be configured before public launch. Never expose a Supabase service-role key in frontend code.
