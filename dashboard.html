@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html class="admin-shell-wait" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khobragade CSC Admin Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <style>html.admin-shell-wait body{visibility:hidden}</style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="icon" href="favicon.ico">
+<link rel="manifest" href="admin-manifest.webmanifest">
+<meta name="theme-color" content="#172554">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="admin-icon-192.png">
+  <link rel="stylesheet" href="commission-admin.css?v=20260825-v25restore">
+
+<style>
+.maintenance-mode-card{
+  margin:18px 0 4px;
+  padding:15px 17px;
+  border:1px solid #eadb8b;
+  border-radius:16px;
+  background:linear-gradient(180deg,#fffdf3 0%,#fffaf0 100%);
+  box-shadow:0 6px 18px rgba(15,23,42,.06);
+}
+.maintenance-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:10px}
+.maintenance-card-head h2{margin:0 0 4px;font-size:19px;color:#172033}
+.maintenance-card-head p{margin:0;color:#64748b;font-size:12.5px}
+.maintenance-status-badge{display:inline-flex;align-items:center;justify-content:center;min-width:46px;padding:6px 10px;border-radius:999px;font-weight:900;font-size:11px}
+.maintenance-status-badge.off{background:#e2e8f0;color:#334155}
+.maintenance-status-badge.on{background:#dcfce7;color:#166534}
+.maintenance-mode-card label{margin-top:7px}
+.maintenance-mode-card textarea{min-height:62px;resize:vertical}
+.maintenance-actions{margin-top:11px}
+@media(max-width:720px){
+  .maintenance-mode-card{padding:13px}
+  .maintenance-card-head h2{font-size:17px}
+}
+</style>
+
+</head>
+<body>
+
+<div class="breaking-news">
+  <div class="breaking-label">🔴 BREAKING NEWS</div>
+  <div class="breaking-text"><span id="breakingNews">Welcome to Khobragade Computer Service Centre Admin Dashboard</span></div>
+</div>
+
+<div class="dashboard">
+  <aside class="sidebar">
+    <div class="logo">
+      <h2>Khobragade CSC</h2>
+      <p>Admin Panel</p>
+    </div>
+
+    <ul id="sidebarMenu">
+      <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
+      <li data-page="commissionpanel"><i class="fa-solid fa-percent"></i><span>Commission Panel</span></li>
+      <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
+      <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
+      <li data-page="passwordreset"><i class="fa-solid fa-key"></i><span>Password Reset Requests</span></li>
+      <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
+      <li data-page="servicesmanager"><i class="fa-solid fa-layer-group"></i><span>Services</span></li>
+      <li data-page="actionsmanager"><i class="fa-solid fa-bolt"></i><span>Actions</span></li>
+      <li data-page="formsmanager"><i class="fa-solid fa-file-pen"></i><span>Forms</span></li>
+      <li data-page="servicecharges"><i class="fa-solid fa-indian-rupee-sign"></i><span>Service Charges</span></li>
+      <li data-page="allcharge"><i class="fa-solid fa-list-check"></i><span>All Charge</span></li>
+      <li data-page="userportalcms"><i class="fa-solid fa-window-maximize"></i><span>Website CMS</span></li>
+      <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
+      <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
+      <li data-page="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
+      <li data-page="admineditor"><i class="fa-solid fa-sliders"></i><span>Admin Dashboard CMS</span></li>
+      <li data-page="themes"><i class="fa-solid fa-palette"></i><span>Theme Manager</span></li>
+      <li data-page="recyclebin"><i class="fa-solid fa-recycle"></i><span>Recycle Bin</span></li>
+      <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Portal Settings</span></li>
+      <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
+    </ul>
+
+    <div class="sidebar-foot">
+      <span>Supabase CMS</span>
+      <small id="adminIdentity">Administrator</small>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Khobragade Computer Service Centre</p>
+        <h1 id="topbarTitle">Dashboard</h1>
+      </div>
+      <div class="top-right">
+        <div class="admin-top-actions">
+          <a class="admin-website-btn" href="https://9637832490.online/" target="_blank" rel="noopener" title="Open Website"><i class="fa-solid fa-globe"></i><span>Website</span></a>
+          <button id="installAdminApp" class="admin-install-mini" type="button" title="Install Admin App"><i class="fa-solid fa-mobile-screen-button"></i><span>Install Admin App</span></button>
+        </div>
+        <button id="notificationBell" class="icon-button" type="button" aria-label="Notifications">
+          <i class="fa-solid fa-bell"></i><span id="notificationCount">0</span>
+        </button>
+        <div id="notificationDropdown" class="notification-dropdown" style="display:none;">
+          <h3>Latest Notifications</h3>
+          <div id="notificationDropdownList">No Notifications</div>
+        </div>
+      </div>
+    </header>
+
+    <section id="dashboardPage" class="page active">
+      <div class="page-intro">
+        <div><h2>Overview</h2><p>Live website content, visitors and publishing activity.</p></div>
+        <button class="secondary-btn" type="button" onclick="refreshDashboard()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+      </div>
+
+      <div class="dashboard-cards">
+        <article class="dashboard-stat-card green"><span class="stat-icon">👤</span><div><p>Total Users / Customers</p><h2 id="totalUsers">0</h2></div></article>
+        <article class="dashboard-stat-card yellow"><span class="stat-icon">🛠️</span><div><p>Total Services</p><h2 id="totalServices">0</h2></div></article>
+        <article class="dashboard-stat-card pink"><span class="stat-icon">📂</span><div><p>Total Categories</p><h2 id="totalCategories">0</h2></div></article>
+        <article class="dashboard-stat-card red"><span class="stat-icon">👥</span><div><p>Total Visitors</p><h2 id="totalVisitors">0</h2><button id="resetVisitorsTopBtn" type="button" style="font-size:11px;padding:3px 8px;margin-top:5px">Reset</button></div></article>
+      </div>
+
+      <div class="dashboard-cards portal-stats">
+        <article class="dashboard-stat-card blue"><span class="stat-icon">📝</span><div><p>Total Applications</p><h2 id="totalApplications">0</h2></div></article>
+        <article class="dashboard-stat-card pink"><span class="stat-icon">⏳</span><div><p>Pending / Processing</p><h2 id="activeApplications">0</h2></div></article>
+        <article class="dashboard-stat-card green"><span class="stat-icon">✅</span><div><p>Completed</p><h2 id="completedApplications">0</h2></div></article>
+        <article class="dashboard-stat-card yellow"><span class="stat-icon">₹</span><div><p>Total Paid</p><h2 id="totalPaidAmount">₹0</h2></div></article>
+      </div>
+
+      <div class="secondary-stats">
+        <div><span>🔔 Notifications</span><strong id="totalNotifications">0</strong></div>
+        <div><span>▶️ Videos</span><strong id="totalVideos">0</strong></div>
+        <div><span>📅 Today Visitors</span><strong id="dashboardTodayVisitors">0</strong></div>
+      </div>
+
+      <div class="dashboard-information">
+        <article class="dashboard-info-box">
+          <div class="box-heading"><div><span class="box-kicker">LIVE</span><h2>Latest Notifications</h2></div><button class="text-button" type="button" onclick="openDashboardPage('notifications')">Manage</button></div>
+          <div id="latestNotifications" class="mini-feed"><div class="empty-state">No Notifications</div></div>
+        </article>
+        <article class="dashboard-info-box">
+          <div class="box-heading"><div><span class="box-kicker">WEBSITE</span><h2>Website CMS</h2></div><button class="text-button" type="button" onclick="openDashboardPage('userportalcms')">Manage</button></div>
+          <div class="mini-feed"><div class="mini-feed-item"><div class="mini-feed-dot"></div><div><strong>New Website / User Portal</strong><p>Profile fields, auto-fill, user menu aur website portal controls yahan manage karein.</p></div></div></div>
+        </article>
+      </div>
+
+      <article id="maintenanceModeCard" class="maintenance-mode-card">
+        <div class="maintenance-card-head">
+          <div>
+            <h2><i class="fa-solid fa-screwdriver-wrench"></i> Website Maintenance Mode</h2>
+            <p>Turn ON while updating. Admin Dashboard stays available; visitors see a professional update page.</p>
+          </div>
+          <span id="maintenanceBadge" class="maintenance-status-badge off">OFF</span>
+        </div>
+
+        <div class="form-grid two">
+          <div>
+            <label>Maintenance Title</label>
+            <input id="maintenanceTitle" type="text" placeholder="Khobragade Computer Service Centre is being updated">
+          </div>
+          <div>
+            <label>Expected Reopen</label>
+            <input id="maintenanceReopen" type="datetime-local">
+          </div>
+        </div>
+
+        <label>Message</label>
+        <textarea id="maintenanceMessage" rows="2" placeholder="New improvements are being added. Please check back shortly."></textarea>
+
+        <div class="form-grid two">
+          <div>
+            <label>Status Text</label>
+            <input id="maintenanceStatusText" type="text" placeholder="UPDATE IN PROGRESS">
+          </div>
+          <div>
+            <label>Website Status</label>
+            <select id="maintenanceStatus">
+              <option value="off">OFF</option>
+              <option value="on">ON</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-actions maintenance-actions">
+          <button id="maintenanceSave" class="primary-btn" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+          <button id="maintenancePreview" class="secondary-btn" type="button"><i class="fa-solid fa-eye"></i> Preview</button>
+          <button id="maintenanceDelete" class="danger-btn" type="button"><i class="fa-solid fa-trash"></i> Delete</button>
+        </div>
+        <div id="maintenanceMessageBox" class="settings-message info">Maintenance settings ready.</div>
+      </article>
+
+    </section>
+
+    <section id="commissionpanelPage" class="page">
+      <div class="page-intro"><div><h2>💸 Commission Panel</h2><p>Selected commission users ke applications, payments aur service-wise discounted charges manage karein.</p></div></div>
+      <div class="commission-shell">
+        <aside class="commission-side">
+          <button class="active" data-commission-tab="applications">Applications</button>
+          <button data-commission-tab="users">Users</button>
+          <button data-commission-tab="payments">Payments / PayU</button>
+          <button data-commission-tab="services">Services</button>
+          <button data-commission-tab="ledger">Commission Ledger</button>
+        </aside>
+        <div class="commission-main">
+          <div class="commission-summary">
+            <article><small>Commission Users</small><b id="commissionUsersCount">0</b></article>
+            <article><small>Commission Applications</small><b id="commissionAppsCount">0</b></article>
+            <article><small>Total Commission Benefit</small><b id="commissionBenefitTotal">₹0</b></article>
+            <article><small>Paid Commission Orders</small><b id="commissionPaidCount">0</b></article>
+          </div>
+
+          <section class="commission-tab active" id="commissionApplicationsTab">
+            <div class="box-heading"><div><span class="box-kicker">APPLICATIONS</span><h2>Commission User Applications</h2></div><input id="commissionAppSearch" placeholder="Search application / user"></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>User</th><th>Service</th><th>Original</th><th>Commission</th><th>Final</th><th>Status</th><th>Payment</th><th>Action</th></tr></thead><tbody id="commissionApplicationsTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionUsersTab">
+            <div class="manager-layout">
+              <div class="manager-form">
+                <div class="form-title"><span>👤</span><div><h3>Create / Edit Commission User</h3><p>Commission User sirf Admin yahan se create karega. Existing normal users Commission Panel me use nahi honge.</p></div></div>
+                <input id="commissionEditUid" type="hidden">
+                <label>Full Name</label><input id="commissionFullName">
+                <div class="form-grid two"><div><label>Mobile</label><input id="commissionMobile" maxlength="10"></div><div><label>Email</label><input id="commissionEmail" type="email"></div></div>
+                <div class="form-grid two"><div><label>Login Password (new user)</label><div class="admin-password-wrap"><input id="commissionPassword" type="password" minlength="6"><button type="button" class="admin-password-eye" data-admin-password-target="commissionPassword">👁</button></div></div><div><label>Commission Code</label><input id="commissionCode" placeholder="AGENT001"></div></div>
+                <div class="form-grid three"><div><label>Default Type</label><select id="commissionDefaultType"><option value="fixed">₹ Fixed</option><option value="percent">% Percentage</option></select></div><div><label>Default Commission</label><input id="commissionDefaultValue" type="number" min="0" step="0.01" value="0"></div><div><label>Status</label><select id="commissionUserStatus"><option>Active</option><option>Inactive</option></select></div></div>
+                <div class="form-grid two"><div><label>Start Date</label><input id="commissionStartDate" type="date"></div><div><label>End Date (optional)</label><input id="commissionEndDate" type="date"></div></div>
+                <div class="settings-actions"><button id="commissionSaveUser" class="primary-btn" type="button">Save Commission User</button><button id="commissionClearUser" class="secondary-btn" type="button">Clear</button></div>
+                <div id="commissionUserMessage" class="settings-message info">Ready.</div>
+              </div>
+              <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">USERS</span><h2>All Commission Users</h2></div><input id="commissionUserSearch" placeholder="Search user"></div><div id="commissionUsersList" class="content-grid"></div></div>
+            </div>
+          </section>
+
+          <section class="commission-tab" id="commissionPaymentsTab">
+            <div class="box-heading"><div><span class="box-kicker">PAYMENTS</span><h2>Commission Payments / PayU</h2></div></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Transaction</th><th>User</th><th>Application</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="commissionPaymentsTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionServicesTab">
+            <div class="box-heading"><div><span class="box-kicker">SERVICE COMMISSION</span><h2>Existing Service Charge Commission</h2><p class="field-help">Current Service Charge read-only rahega. Selected Commission User ke liye commission Set / Update / Delete karein. Current Charge → Commission → Final User Charge.</p></div></div>
+            <div class="toolbar"><select id="commissionServiceUser"><option value="">Select Commission User</option></select><input id="commissionServiceSearch" placeholder="Search service / action"><button id="commissionSaveRates" class="primary-btn" type="button">Save All Commission Changes</button></div>
+            <div id="commissionServiceMessage" class="settings-message info">Commission user select karein.</div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Action</th><th>Current Charge</th><th>Type</th><th>Commission</th><th>Final Charge</th><th>Active</th><th>Action</th></tr></thead><tbody id="commissionServicesTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionLedgerTab">
+            <div class="box-heading"><div><span class="box-kicker">HISTORY</span><h2>Commission Ledger</h2></div></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>User</th><th>Service</th><th>Original</th><th>Commission</th><th>Final</th><th>Status</th><th>Action</th></tr></thead><tbody id="commissionLedgerTable"></tbody></table></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="admineditorPage" class="page">
+      <div class="page-intro"><div><h2>🎛️ Admin Dashboard CMS</h2><p>Admin Dashboard ke menu, Admin pages, buttons aur complete Admin theme ko yahin se manage karein.</p></div></div>
+      <div class="admin-editor-tabs">
+        <button class="secondary-btn active" type="button" data-ae-tab="menu">☰ Menu Manager</button>
+        <button class="secondary-btn" type="button" data-ae-tab="pages">📄 Admin Pages</button>
+        <button class="secondary-btn" type="button" data-ae-tab="theme">🎨 Admin Theme</button>
+        <button class="secondary-btn" type="button" data-ae-tab="buttons">🔘 Button Manager</button>
+      </div>
+      <div id="aeMenuPanel" class="admin-editor-panel active">
+        <div class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>➕</span><div><h3>New Admin Menu</h3><p>Naya menu kisi existing ya custom Admin page ko open karega.</p></div></div>
+            <label>Menu Name</label><input id="aeNewMenuName" placeholder="New Menu">
+            <label>Icon</label><input id="aeNewMenuIcon" value="fa-solid fa-link" placeholder="fa-solid fa-link">
+            <label>Open Page</label><select id="aeNewMenuTarget"></select>
+            <div class="form-grid two"><div><label>Order</label><input id="aeNewMenuOrder" type="number" value="180"></div><div><label>Visible</label><select id="aeNewMenuVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+            <div class="settings-actions"><button id="aeAddMenu" class="primary-btn" type="button">Add New Menu</button><button id="aeClearMenu" class="secondary-btn" type="button">Clear</button></div>
+          </div>
+          <div class="manager-content">
+            <div class="box-heading"><div><span class="box-kicker">FULL CONTROL</span><h2>All Admin Menus</h2></div><button id="aeResetMenu" class="secondary-btn" type="button">Reset Original</button></div>
+            <p class="field-help">Name, icon, order, page target, Hide/Show, Edit/Update/Delete. Delete item Recycle Bin me jayega.</p>
+            <div id="aeMenuList" class="admin-editor-list"></div>
+            <div class="settings-actions"><button id="aeSaveMenu" class="primary-btn" type="button">Save / Update Menu</button></div>
+          </div>
+        </div>
+      </div>
+      <div id="aePagesPanel" class="admin-editor-panel">
+        <div class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>📄</span><div><h3>Create / Edit Admin Page</h3><p>Naya Admin page sidebar menu me bhi add ho sakta hai.</p></div></div>
+            <label>Page Name</label><input id="aePageName" placeholder="My Admin Page">
+            <label>Icon</label><input id="aePageIcon" placeholder="fa-solid fa-star" value="fa-solid fa-file">
+            <label>Heading</label><input id="aePageHeading" placeholder="Page Heading">
+            <label>Content</label><textarea id="aePageContent" placeholder="Admin page content..."></textarea>
+            <div class="form-grid two"><div><label>Order</label><input id="aePageOrder" type="number" value="180"></div><div><label>Visible</label><select id="aePageVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+            <div class="settings-actions"><button id="aeSavePage" class="primary-btn" type="button">Save Admin Page</button><button id="aeClearPage" class="secondary-btn" type="button">Clear</button></div>
+          </div>
+          <div class="manager-content">
+            <h3>Existing + New Admin Pages</h3><p class="field-help">Admin pages ka name/heading, Hide/Show aur order edit karein. Delete Recycle Bin me safe rahega.</p>
+            <div id="aePagesList" class="content-grid"></div>
+          </div>
+        </div>
+      </div>
+      <div id="aeThemePanel" class="admin-editor-panel">
+        <div class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>🎨</span><div><h3>Admin Dashboard Theme</h3><p>Public website theme se bilkul alag.</p></div></div>
+            <label>Theme Name</label><input id="aeThemeName" value="Original Admin">
+            <div class="form-grid three"><div><label>Green</label><input id="aeGreen" type="color" value="#00c853"></div><div><label>Yellow</label><input id="aeYellow" type="color" value="#ffd600"></div><div><label>Pink</label><input id="aePink" type="color" value="#ff4081"></div></div>
+            <div class="form-grid three"><div><label>Red</label><input id="aeRed" type="color" value="#ff1744"></div><div><label>Blue</label><input id="aeBlue" type="color" value="#2979ff"></div><div><label>Text</label><input id="aeText" type="color" value="#111827"></div></div>
+            <div class="form-grid three"><div><label>Page Background</label><input id="aeBg" type="color" value="#f4f7fc"></div><div><label>Card / Surface</label><input id="aePanel" type="color" value="#ffffff"></div><div><label>Border</label><input id="aeLine" type="color" value="#e5e7eb"></div></div>
+            <div class="form-grid three"><div><label>Sidebar Start</label><input id="aeSide1" type="color" value="#00c853"></div><div><label>Sidebar End</label><input id="aeSide2" type="color" value="#ff1744"></div><div><label>Menu Text</label><input id="aeMenuText" type="color" value="#ffffff"></div></div>
+            <div class="form-grid two"><div><label>Card Radius</label><input id="aeRadius" type="number" min="0" max="40" value="18"></div><div><label>Sidebar Width</label><input id="aeSidebarWidth" type="number" min="210" max="360" value="260"></div></div>
+            <div class="settings-actions"><button id="aePreviewTheme" class="secondary-btn" type="button">Preview</button><button id="aeSaveTheme" class="primary-btn" type="button">Save & Apply</button><button id="aeResetTheme" class="secondary-btn" type="button">Original Theme</button></div>
+          </div>
+          <div class="manager-content"><h3>Saved Admin Themes</h3><p class="field-help">Create, Edit, Update, Apply aur Delete. Delete theme Recycle Bin me jayegi.</p><div id="aeThemeList" class="content-grid"></div></div>
+        </div>
+      </div>
+      <div id="aeButtonsPanel" class="admin-editor-panel">
+        <div id="bmPanel" class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>🔘</span><div><h3>Add / Edit Button</h3><p>Admin Dashboard aur new website/portal ke page par button lagayein.</p></div></div>
+            <label>Button Text</label><input id="bmText" placeholder="Website">
+            <label>Icon Class</label><input id="bmIcon" value="fa-solid fa-link" placeholder="fa-solid fa-globe">
+            <label>Button Link / URL</label><input id="bmUrl" placeholder="https://9637832490.online/">
+            <div class="form-grid two"><div><label>Show On</label><select id="bmArea"><option value="admin">Admin Dashboard</option><option value="public">Website / User Portal</option></select></div><div><label>Page</label><select id="bmPage"></select></div></div>
+            <div class="form-grid two"><div><label>Position</label><select id="bmPosition"></select></div><div><label>Open</label><select id="bmTarget"><option value="_blank">New Tab</option><option value="_self">Same Window</option></select></div></div>
+            <div class="form-grid two"><div><label>Order</label><input id="bmOrder" type="number" value="50"></div><div><label>Visible</label><select id="bmVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+            <div class="form-grid two"><div><label>Button Color</label><input id="bmBg" type="color" value="#2979ff"></div><div><label>Text Color</label><input id="bmTextColor" type="color" value="#ffffff"></div></div>
+            <div class="form-grid two"><div><label>Roundness</label><input id="bmRadius" type="number" min="0" max="50" value="12"></div><div><label>Text Size</label><input id="bmFontSize" type="number" min="10" max="28" value="15"></div></div>
+            <div class="settings-actions"><button id="bmSave" class="primary-btn" type="button">Add Button</button><button id="bmClear" class="secondary-btn" type="button">Clear</button></div>
+            <div id="bmMessage" class="settings-message info">Button Manager ready.</div>
+          </div>
+          <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">TOTAL CONTROL</span><h2>All Buttons — Existing + New</h2></div></div><p class="field-help">Existing + naye custom buttons. Edit/Update/Delete-Hide/Restore, position, link, color aur visibility control.</p><div id="bmList" class="content-grid"></div></div>
+        </div>
+      </div>
+      <div id="aeMessage" class="settings-message info">Admin Editor ready.</div>
+    </section>
+
+    <section id="updatesPage" class="page">
+      <div class="page-intro"><div><h2>📢 Government Updates</h2><p>Publish new CSC and government updates directly to the website.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form update-form">
+          <div class="form-title"><span>📝</span><div><h3>Create / Edit Update</h3><p>Published updates can appear on the public homepage.</p></div></div>
+          <label>Update Title</label><input type="text" id="updateTitle" placeholder="Update Title">
+          <label>Description</label><textarea id="updateDescription" placeholder="Update Description"></textarea>
+          <div class="form-grid two">
+            <div><label>Category</label><select id="updateCategory"><option>Government Update</option><option>Maha ID</option><option>Ayushman Card</option><option>PAN Card</option><option>Divyang</option><option>Scholarship</option><option>Agriculture</option></select></div>
+            <div><label>Status</label><select id="updateStatus"><option>Published</option><option>Draft</option></select></div>
+          </div>
+          <label class="check-row"><input type="checkbox" id="updateFeatured"> <span>Show as Featured Update on homepage</span></label>
+          <button id="saveUpdate" class="primary-btn" type="button">Save Update</button>
+        </div>
+        <div class="manager-content">
+          <div class="toolbar"><input type="search" id="updateSearch" placeholder="🔍 Search updates..."><select id="updateStatusFilter"><option value="all">All Status</option><option>Published</option><option>Draft</option></select></div>
+          <div id="updatesList" class="content-grid">No Updates Available</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="servicesPage" class="page">
+      <div class="page-intro"><div><h2>🛠 Services Management</h2><p>Add complete CSC services and control what appears on your website.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form service-form">
+          <div class="form-title"><span>🛠️</span><div><h3>Service Details</h3><p>Add, edit, publish or feature a service.</p></div></div>
+          <label>Service Name (English / Default)</label><input type="text" id="serviceName" placeholder="Service Name">
+<div class="form-grid two"><div><label>Service Name (Hindi)</label><input type="text" id="serviceNameHI" placeholder="हिंदी नाम"></div><div><label>Service Name (Marathi)</label><input type="text" id="serviceNameMR" placeholder="मराठी नाव"></div></div>
+          <label>Description (English / Default)</label><textarea id="serviceDescription" placeholder="Service Description"></textarea>
+<div class="form-grid two"><div><label>Description (Hindi)</label><textarea id="serviceDescriptionHI" placeholder="हिंदी विवरण"></textarea></div><div><label>Description (Marathi)</label><textarea id="serviceDescriptionMR" placeholder="मराठी माहिती"></textarea></div></div>
+          <div class="form-grid two">
+            <div><label>Category</label><select id="serviceCategory"><option>Government</option><option>Aadhaar OTP Based</option><option>PAN Card</option><option>Voter ID</option><option>Ayushman</option><option>ABHA</option><option>Labour</option><option>Maha ID</option><option>Certificates</option><option>RTO</option><option>Passport</option><option>Agriculture</option><option>Scholarship</option><option>Banking</option><option>Bill Payment</option><option>Online Service</option><option>Divyang</option><option>Yojana - Women</option><option>Yojana - Education</option><option>Yojana - Farmer</option><option>Yojana - Social Welfare</option><option>Yojana - Senior Citizen</option><option>Yojana - Divyang</option><option>Yojana - Health</option><option>Yojana - Housing</option><option>Yojana - Employment</option><option>Yojana - Labour</option><option>Yojana - Food</option><option>Yojana - Digital Maharashtra</option></select></div>
+            <div><label>Icon</label><input type="text" id="serviceIcon" placeholder="📄"></div>
+          </div>
+          <div class="form-grid two">
+            <div><label>Publish Status</label><select id="serviceStatus"><option>Published</option><option>Draft</option></select></div>
+            <div><label>Service Availability</label><select id="serviceAvailability"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div>
+            <div><label>Open Target</label><select id="serviceTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div>
+            <label class="check-row standalone"><input type="checkbox" id="serviceFeatured"><span>Featured Service</span></label>
+          </div>
+          <button id="saveService" class="primary-btn" type="button">Save Service</button><button id="loadDefaultCatalog" class="secondary-btn" type="button" style="margin-top:10px;width:100%">⚡ Load Complete CSC + Yojana + Divyang Catalog</button>
+        </div>
+        <div class="manager-content">
+          <div class="toolbar triple"><input type="search" id="serviceSearch" placeholder="🔍 Search services..."><select id="serviceCategoryFilter"><option value="all">All Categories</option></select><select id="serviceStatusFilter"><option value="all">All Publish Status</option><option>Published</option><option>Draft</option></select><select id="serviceAvailabilityFilter"><option value="all">All Availability</option><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div>
+          <div id="servicesList" class="content-grid">No Services Available</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="categoriesPage" class="page">
+      <div class="page-intro"><div><h2>📂 Service Categories</h2><p>New User Portal ke services ko professional categories me organize karein.</p></div></div>
+      <div class="compact-manager">
+        <div class="manager-form category-form"><label>Category Name</label><div class="inline-form"><input type="text" id="categoryName" placeholder="Category Name"><button id="saveCategory" class="primary-btn" type="button">Save Category</button></div></div>
+        <div class="toolbar"><input type="search" id="categorySearch" placeholder="🔍 Search categories..."></div>
+        <div id="categoriesList" class="category-list">No Categories Available</div>
+      </div>
+    </section>
+
+    <section id="notificationsPage" class="page">
+      <div class="page-intro"><div><h2>🔔 Notifications</h2><p>Create breaking news, popup and normal notices for the public website.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form notification-form">
+          <label>Notification Title</label><input type="text" id="notificationTitle" placeholder="Notification Title">
+          <label>Description</label><textarea id="notificationDescription" placeholder="Notification Description"></textarea>
+          <div class="form-grid two">
+            <div><label>Type</label><select id="notificationType"><option value="breaking">Breaking News</option><option value="popup">Popup Notification</option><option value="normal">Normal Notification</option></select></div>
+            <div><label>Priority</label><select id="notificationPriority"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div>
+          </div>
+          <div class="form-grid two">
+            <div><label>Status</label><select id="notificationStatus"><option>Published</option><option>Draft</option></select></div>
+            <div><label>Audience Target</label><select id="notificationAudience"><option value="all">Everyone</option><option value="guest">Login / Register Page Only</option><option value="members">Logged-in Users Only</option></select></div>
+          </div>
+          <div class="form-grid two">
+            <div><label>Action / Link URL (Optional)</label><input type="url" id="notificationLink" placeholder="https://... or portal page"></div>
+            <div><label>Link Target</label><select id="notificationTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div>
+          </div>
+          <div class="form-grid two">
+            <div><label>Notification Image</label><input type="file" id="notificationImageFile" accept="image/*"></div>
+            <div><label>Or Image URL</label><input type="url" id="notificationImageUrl" placeholder="https://..."></div>
+          </div>
+          <p class="field-help">Breaking, Normal aur Popup tino me image optional hai. Popup image full-screen responsive dikhegi.</p>
+          <button id="saveNotification" class="primary-btn" type="button">Publish Notification</button>
+          <div id="notificationPreview" class="preview-box"><h2>👁 Live Preview</h2><p>Notification Preview will appear here...</p></div>
+        </div>
+        <div class="manager-content">
+          <div class="toolbar"><input type="search" id="notificationSearch" placeholder="🔍 Search notifications..."><select id="notificationTypeFilter"><option value="all">All Types</option><option value="breaking">Breaking</option><option value="popup">Popup</option><option value="normal">Normal</option></select></div>
+          <div class="quick-actions"><button id="publishAll" type="button">🚀 Publish All</button><button id="deleteAll" class="danger-btn" type="button">🗑 Delete All</button><button id="refreshNotifications" class="secondary-btn" type="button">🔄 Refresh</button></div><div class="notification-summary"><div><span>Total</span><strong id="notificationModuleTotal">0</strong></div><div><span>Published</span><strong id="publishedNotifications">0</strong></div><div><span>Draft</span><strong id="draftNotifications">0</strong></div></div>
+          <div id="notificationList" class="content-grid">No Notifications Available</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="analyticsPage" class="page">
+      <div class="page-intro"><div><h2>📊 Analytics</h2><p>Visitor chart and live content statistics from Supabase.</p></div><button class="secondary-btn" type="button" onclick="refreshAnalytics()">Refresh Analytics</button></div>
+      <div class="analytics-cards">
+        <div class="analytics-card"><span>👥</span><p>Total Visitors</p><h2 id="analyticsVisitors">0</h2><button id="resetVisitorsAnalyticsBtn" type="button" style="font-size:11px;padding:3px 8px;margin-top:5px">Reset</button></div>
+        <div class="analytics-card"><span>📅</span><p>Today Visitors</p><h2 id="todayVisitors">0</h2></div>
+        <div class="analytics-card"><span>📢</span><p>Total Updates</p><h2 id="analyticsUpdates">0</h2></div>
+        <div class="analytics-card"><span>🛠️</span><p>Total Services</p><h2 id="analyticsServices">0</h2></div>
+        <div class="analytics-card"><span>📂</span><p>Categories</p><h2 id="analyticsCategories">0</h2></div>
+        <div class="analytics-card"><span>🔔</span><p>Notifications</p><h2 id="analyticsNotifications">0</h2></div>
+        <div class="analytics-card"><span>💬</span><p>WhatsApp Clicks</p><h2 id="analyticsWhatsappClicks">0</h2></div>
+        <div class="analytics-card"><span>⭐</span><p>Tracked Services</p><h2 id="analyticsTrackedServices">0</h2></div>
+      </div>
+      <div class="analytics-panel"><div class="box-heading"><div><span class="box-kicker">LAST 14 DAYS</span><h2>Visitor Trend</h2></div></div><div id="visitorResetMessage" class="settings-message info">Reset removes old visitor totals/daily visitor history only. Other analytics stay safe.</div><canvas id="visitorChart"></canvas></div>
+      <div class="analytics-panel"><h2>Top Services / WhatsApp Apply</h2><div id="serviceAnalyticsData">Service analytics loading...</div></div>
+      <div class="analytics-panel"><h2>Website Statistics</h2><div id="analyticsData">Analytics Loading...</div></div>
+    </section>
+
+
+    <section id="seoPage" class="page">
+      <div class="page-intro"><div><h2>🔎 SEO Manager</h2><p>Google title, description, keywords aur social share image page-wise manage karein.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form">
+          <label>Page</label>
+          <select id="seoPageSelect"><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select>
+          <label>SEO Title</label><input id="seoTitle" type="text" maxlength="70" placeholder="Page title for Google">
+          <label>Meta Description</label><textarea id="seoDescription" maxlength="180" placeholder="Short description for Google"></textarea>
+          <label>Keywords</label><input id="seoKeywords" type="text" placeholder="PAN, Maha ID, Divyang, CSC...">
+          <label>Social Share Image URL</label><input id="seoImage" type="url" placeholder="Cloudinary image URL">
+          <label>Canonical URL (optional)</label><input id="seoCanonical" type="url" placeholder="https://9637832490.online/...">
+          <div class="settings-actions"><button id="saveSeo" class="primary-btn" type="button">Save SEO</button><button id="resetSeoForm" class="secondary-btn" type="button">Reset Form</button></div>
+          <div id="seoMessage" class="settings-message info">SEO Manager ready.</div>
+        </div>
+        <div class="manager-content">
+          <div id="seoList" class="content-grid"><div class="empty-state">SEO settings loading...</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="imagesPage" class="page">
+      <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload to Cloudinary Storage or add an external image URL.</p></div></div>
+      <div class="manager-form image-form horizontal-form">
+        <input type="text" id="imageTitle" placeholder="Image Title">
+        <select id="imageCategory"><option>Gallery</option><option>Header Logo</option><option>Home Banner</option><option>Services Banner</option><option>Yojana Banner</option><option>Divyang Banner</option><option>Documents Banner</option><option>Contact Banner</option><option>Service</option><option>Update</option><option>Other</option></select>
+        <input type="file" id="imageUpload" accept="image/*">
+        <input type="url" id="imageUrl" placeholder="Or paste Image URL">
+        <button id="uploadImage" class="primary-btn" type="button">Upload / Add Image</button>
+      </div>
+      <div class="toolbar"><input type="search" id="searchImage" placeholder="🔍 Search images..."><button id="searchImageBtn" class="secondary-btn" type="button">Search</button></div>
+      <div id="imagesList" class="images-grid"></div>
+    </section>
+
+    <section id="documentsPage" class="page">
+      <div class="page-intro"><div><h2>📄 Documents Manager</h2><p>Central document library for forms and public downloads.</p></div></div>
+      <div class="manager-form document-form horizontal-form">
+        <input type="text" id="documentTitle" placeholder="Document Title">
+        <select id="documentCategory"><option>Government</option><option>PAN Card</option><option>Aadhaar OTP Based</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select>
+        <input type="file" id="documentFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+        <input type="url" id="documentUrl" placeholder="Or paste Document URL">
+        <button id="uploadDocument" class="primary-btn" type="button">Upload / Add Document</button>
+      </div>
+      <div class="toolbar"><input type="search" id="documentSearch" placeholder="🔍 Search documents..."><select id="documentCategoryFilter"><option value="all">All Categories</option><option>Government</option><option>PAN Card</option><option>Aadhaar OTP Based</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select></div>
+      <div id="documentsList">No Documents Available</div><div class="dashboard-info-box" style="margin-top:24px"><div class="box-heading"><div><span class="box-kicker">EDITABLE</span><h2>Document Checklists</h2></div></div><p>Public Documents page ki list Add / Edit / Update / Delete karein.</p><div class="manager-layout"><div class="manager-form checklist-form"><label>Checklist Title</label><input id="checklistTitle" type="text"><label>Category</label><input id="checklistCategory" type="text"><label>Documents (one per line)</label><textarea id="checklistItems"></textarea><label>Status</label><select id="checklistStatus"><option>Published</option><option>Draft</option></select><button id="saveChecklist" class="primary-btn" type="button">Save Checklist</button></div><div class="manager-content"><div id="checklistsList" class="content-grid"><div class="empty-state">No editable checklists.</div></div></div></div></div>
+    </section>
+
+    <section id="youtubePage" class="page">
+      <div class="page-intro"><div><h2>▶️ YouTube Manager</h2><p>Publish YouTube videos to the public website from one place.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form youtube-form">
+          <label>Video Title</label><input type="text" id="youtubeTitle" placeholder="Video Title">
+          <label>YouTube Link</label><input type="url" id="youtubeLink" placeholder="https://youtube.com/....">
+          <label>Description</label><textarea id="youtubeDescription" placeholder="Video Description"></textarea>
+          <div class="form-grid two"><div><label>Status</label><select id="youtubeStatus"><option>Published</option><option>Draft</option></select></div><div><label>Open Target</label><select id="youtubeTarget"><option value="_blank">New Tab</option><option value="_self">Same Window</option></select></div></div>
+          <button id="saveYoutube" class="primary-btn" type="button">Save Video</button>
+        </div>
+        <div class="manager-content"><div class="toolbar"><input type="search" id="youtubeSearch" placeholder="🔍 Search videos..."></div><div id="youtubeList" class="youtube-grid">No Videos Available</div></div>
+      </div>
+    </section>
+
+
+    
+    <section id="pagesPage" class="page">
+      <div class="page-intro"><div><h2>📝 Website Pages</h2><p>Public website ke pages ko yahin se Edit / Update / Clear karein.</p></div></div>
+
+      <div id="publicPagesList" class="website-pages-grid">
+        <article class="website-page-card"><div><h3>🏠 Home</h3><p>Homepage title, subtitle aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="home">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="home">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>🛠️ Services</h3><p>Services page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="services">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="services">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>🏛️ Yojana</h3><p>Government Yojana page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="yojana">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="yojana">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>♿ Divyang</h3><p>Divyang page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="divyang">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="divyang">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>📄 Documents</h3><p>Documents page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="documents">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="documents">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>☎️ Contact</h3><p>Contact page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="contact">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="contact">🗑 Clear</button></div></article>
+      </div>
+
+      <div class="manager-layout" style="margin-top:22px">
+        <div class="manager-form">
+          <h3 id="pageEditorHeading">Edit Home Page</h3>
+          <label>Select Public Page</label>
+          <select id="pageKey"><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select>
+          <label>Page Title</label><input id="pageTitle" type="text" placeholder="Page title">
+          <label>Subtitle</label><textarea id="pageSubtitle" placeholder="Page subtitle"></textarea>
+          <label>Description / Details</label><textarea id="pageDescriptionAdmin" placeholder="Page details"></textarea>
+          <label>Status</label><select id="pageStatus"><option>Published</option><option>Draft</option></select>
+          <div class="settings-actions"><button id="savePageContent" class="primary-btn" type="button">Update Page</button><button id="deletePageContent" class="danger-btn" type="button">Delete / Clear Custom Content</button></div>
+          <div id="pageManagerMessage" class="settings-message info">Page select karke edit karein.</div>
+        </div>
+        <div class="manager-content">
+          <div class="dashboard-info-box">
+            <h3>Content Control</h3>
+            <p><b>Notification:</b> Notifications module</p>
+            <p><b>Services / Yojana / Divyang cards:</b> Services module</p>
+            <p><b>Documents:</b> Documents module</p>
+            <p><b>YouTube videos:</b> YouTube module</p>
+            <p><b>Phone / WhatsApp / address:</b> Settings module</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="sitebuilderPage" class="page">
+      <div class="page-intro"><div><h2>🧩 Full Website CMS</h2><p>Header, menu bar, Home sections, footer, colors, visibility aur custom sections manage karein.</p></div></div>
+      <div class="dashboard-information cms-summary">
+        <article class="dashboard-info-box"><h3>🌐 Global Website</h3><p>Menu labels, top bar, search, header/footer colors.</p></article>
+        <article class="dashboard-info-box"><h3>🏠 Home Page</h3><p>Hero, YouTube, Quick Services, About.</p></article>
+        <article class="dashboard-info-box"><h3>➕ Custom Sections</h3><p>Kisi bhi page par new image/text/button section add karein.</p></article>
+      </div>
+      <div class="manager-layout">
+        <div class="manager-form">
+          <div class="form-title"><span>🎛️</span><div><h3>Global Header / Menu / Footer</h3><p>Save karte hi poori website par apply hoga.</p></div></div>
+          <label>Top Bar Left Text</label><input id="cmsTopLeft" type="text">
+          <div class="form-grid two"><div><label>Menu Background</label><input id="cmsMenuBg" type="color" value="#172554"></div><div><label>Menu Text Color</label><input id="cmsMenuText" type="color" value="#ffffff"></div></div>
+          <div class="form-grid two"><div><label>Active Menu Color</label><input id="cmsMenuActive" type="color" value="#ec4899"></div><div><label>Footer Background</label><input id="cmsFooterBg" type="color" value="#07182d"></div></div>
+          <h4 class="cms-subtitle">Menu Names</h4>
+          <div class="form-grid two">
+            <div><label>Home</label><input id="cmsNavHome" type="text"></div><div><label>Services</label><input id="cmsNavServices" type="text"></div>
+            <div><label>Yojana</label><input id="cmsNavYojana" type="text"></div><div><label>Divyang</label><input id="cmsNavDivyang" type="text"></div>
+            <div><label>Documents</label><input id="cmsNavDocuments" type="text"></div><div><label>Contact</label><input id="cmsNavContact" type="text"></div>
+            <div><label>YouTube</label><input id="cmsNavYoutube" type="text"></div><div><label>WhatsApp</label><input id="cmsNavWhatsapp" type="text"></div>
+          </div>
+          <h4 class="cms-subtitle">Main Menu Visibility & Order</h4>
+          <div class="menu-control-grid">
+            <div class="menu-control-row"><b>Home</b><select id="cmsNavHomeVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavHomeOrder" type="number" value="10" title="Order"></div>
+            <div class="menu-control-row"><b>Services</b><select id="cmsNavServicesVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavServicesOrder" type="number" value="20" title="Order"></div>
+            <div class="menu-control-row"><b>Yojana</b><select id="cmsNavYojanaVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavYojanaOrder" type="number" value="30" title="Order"></div>
+            <div class="menu-control-row"><b>Divyang</b><select id="cmsNavDivyangVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavDivyangOrder" type="number" value="40" title="Order"></div>
+            <div class="menu-control-row"><b>Documents</b><select id="cmsNavDocumentsVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavDocumentsOrder" type="number" value="50" title="Order"></div>
+            <div class="menu-control-row"><b>Contact</b><select id="cmsNavContactVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavContactOrder" type="number" value="60" title="Order"></div>
+            <div class="menu-control-row"><b>YouTube</b><select id="cmsNavYoutubeVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavYoutubeOrder" type="number" value="70" title="Order"></div>
+            <div class="menu-control-row"><b>WhatsApp</b><select id="cmsNavWhatsappVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavWhatsappOrder" type="number" value="80" title="Order"></div>
+          </div>
+          <h4 class="cms-subtitle">Search Bar</h4>
+          <label>Search Placeholder</label><input id="cmsSearchPlaceholder" type="text">
+          <div class="form-grid two"><div><label>Button Text</label><input id="cmsSearchButton" type="text"></div><div><label>Search Bar</label><select id="cmsSearchVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+          <h4 class="cms-subtitle">Footer</h4>
+          <div class="form-grid two"><div><label>Quick Links Heading</label><input id="cmsFooterQuickTitle" type="text"></div><div><label>Support Heading</label><input id="cmsFooterSupportTitle" type="text"></div></div>
+          <label>Copyright</label><input id="cmsCopyright" type="text">
+          <button id="saveGlobalCms" class="primary-btn" type="button">Save Global Website</button>
+          <div id="globalCmsMessage" class="settings-message info">Global CMS ready.</div>
+        </div>
+        <div class="manager-form">
+          <div class="form-title"><span>🏠</span><div><h3>Home Page Sections</h3><p>Edit / Show-Hide / colors.</p></div></div>
+          <h4 class="cms-subtitle">Hero</h4>
+          <label>Eyebrow</label><input id="cmsHeroEyebrow" type="text">
+          <label>Hero Title</label><input id="cmsHeroTitle" type="text">
+          <label>Hero Description</label><textarea id="cmsHeroText"></textarea>
+          <div class="form-grid two"><div><label>Primary Button</label><input id="cmsHeroBtn1" type="text"></div><div><label>WhatsApp Button</label><input id="cmsHeroBtn2" type="text"></div></div>
+          <div class="form-grid two"><div><label>Hero Start Color</label><input id="cmsHeroColor1" type="color" value="#ec4899"></div><div><label>Hero End Color</label><input id="cmsHeroColor2" type="color" value="#2563eb"></div></div>
+          <label>Hero</label><select id="cmsHeroVisible"><option value="true">Show</option><option value="false">Hide</option></select>
+          <h4 class="cms-subtitle">YouTube</h4>
+          <label>Heading</label><input id="cmsYoutubeTitle" type="text">
+          <label>Description</label><textarea id="cmsYoutubeText"></textarea>
+          <label>Section</label><select id="cmsYoutubeVisible"><option value="true">Show</option><option value="false">Hide</option></select>
+          <h4 class="cms-subtitle">Quick Services</h4>
+          <label>Heading</label><input id="cmsQuickTitle" type="text">
+          <label>Description</label><textarea id="cmsQuickText"></textarea>
+          <div class="form-grid two"><div><label>Button</label><input id="cmsQuickButton" type="text"></div><div><label>Section</label><select id="cmsQuickVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+          <h4 class="cms-subtitle">About</h4>
+          <label>Small Heading</label><input id="cmsAboutKicker" type="text">
+          <label>Title</label><input id="cmsAboutTitle" type="text">
+          <label>Description</label><textarea id="cmsAboutText"></textarea>
+          <label>Section</label><select id="cmsAboutVisible"><option value="true">Show</option><option value="false">Hide</option></select>
+          <button id="saveHomeCms" class="primary-btn" type="button">Save Home Sections</button>
+          <div id="homeCmsMessage" class="settings-message info">Home CMS ready.</div>
+        </div>
+      </div>
+      <div class="manager-layout" style="margin-top:22px">
+        <div class="manager-form custom-section-form">
+          <div class="form-title"><span>➕</span><div><h3>Add / Edit Custom Section</h3><p>Kisi bhi page par new professional section.</p></div></div>
+          <div class="form-grid two"><div><label>Page</label><select id="sectionPage"><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select></div><div><label>Order</label><input id="sectionOrder" type="number" min="0" value="50"></div></div>
+          <label>Title</label><input id="sectionTitle" type="text">
+          <label>Description</label><textarea id="sectionDescription"></textarea>
+          <div class="form-grid two"><div><label>Image URL</label><input id="sectionImage" type="url"></div><div><label>Button Text</label><input id="sectionButtonText" type="text"></div></div>
+          <label>Button Link</label><input id="sectionButtonLink" type="text">
+          <div class="form-grid three"><div><label>Background</label><input id="sectionBg" type="color" value="#ffffff"></div><div><label>Text</label><input id="sectionText" type="color" value="#132238"></div><div><label>Accent</label><input id="sectionAccent" type="color" value="#ec4899"></div></div>
+          <label>Visibility</label><select id="sectionVisible"><option value="true">Visible</option><option value="false">Hidden</option></select>
+          <div class="settings-actions"><button id="saveCustomSection" class="primary-btn" type="button">Save Section</button><button id="clearCustomSection" class="secondary-btn" type="button">Clear Form</button></div>
+        </div>
+        <div class="manager-content">
+          <div class="toolbar"><input id="sectionSearch" type="search" placeholder="🔍 Search custom sections..."><select id="sectionPageFilter"><option value="all">All Pages</option><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select></div>
+          <div id="customSectionsList" class="content-grid"><div class="empty-state">No custom sections.</div></div>
+        </div>
+      </div>
+      <div class="dashboard-info-box" style="margin-top:22px">
+        <div class="box-heading"><div><span class="box-kicker">ONE-TIME</span><h2>Make Existing Content Fully Editable</h2></div></div>
+        <p>Existing default catalog ko Supabase/Admin me import karke code fallback band karein.</p>
+        <div class="settings-actions"><button id="importEditableCatalog" class="secondary-btn" type="button">⚡ Import Services + Yojana + Divyang</button><button id="importEditableChecklists" class="secondary-btn" type="button">📋 Import Document Checklists</button></div>
+        <div id="migrationMessage" class="settings-message info">Import ek baar karna hai.</div>
+      </div>
+    </section>
+
+    <section id="dynamicpagesPage" class="page"><div class="page-intro"><div><h2>🧱 Page & Menu Builder</h2><p>New page + automatic menu + sections ka full control.</p></div></div><div class="manager-layout"><div class="manager-form"><h3>Create / Edit Page</h3><label>Page Name</label><input id="dpName"><label>URL Slug</label><input id="dpSlug" placeholder="latest-updates"><label>Page Title</label><input id="dpTitle"><label>Description</label><textarea id="dpText"></textarea><div class="form-grid two"><div><label>Start Color</label><input id="dpC1" type="color" value="#ec4899"></div><div><label>End Color</label><input id="dpC2" type="color" value="#2563eb"></div></div><div class="form-grid two"><div><label>Add to Menu</label><select id="dpMenu"><option value="true">Yes</option><option value="false">No</option></select></div><div><label>Menu Order</label><input id="dpOrder" type="number" value="50"></div></div><label>Status</label><select id="dpStatus"><option>Published</option><option>Draft</option></select><button id="dpSave" class="primary-btn">Save Page</button><button id="dpClear" class="secondary-btn">Clear</button></div><div class="manager-content"><div id="dpList" class="content-grid"></div></div></div><div class="manager-layout" style="margin-top:22px"><div class="manager-form"><h3>Page Sections</h3><label>Page</label><select id="dsPage"></select><label>Section Title</label><input id="dsTitle"><label>Text</label><textarea id="dsText"></textarea><label>Image URL</label><input id="dsImage"><div class="form-grid two"><div><label>Button Text</label><input id="dsButton"></div><div><label>Button Link</label><input id="dsLink"></div></div><div class="form-grid three"><div><label>Background</label><input id="dsBg" type="color" value="#ffffff"></div><div><label>Text Color</label><input id="dsColor" type="color" value="#132238"></div><div><label>Accent</label><input id="dsAccent" type="color" value="#ec4899"></div></div><div class="form-grid two"><div><label>Order</label><input id="dsOrder" type="number" value="50"></div><div><label>Visible</label><select id="dsVisible"><option value="true">Visible</option><option value="false">Hidden</option></select></div></div><button id="dsSave" class="primary-btn">Save Section</button><button id="dsClear" class="secondary-btn">Clear</button></div><div class="manager-content"><div id="dsList" class="content-grid"></div></div></div>
+<div class="manager-layout" style="margin-top:22px"><div class="manager-form"><h3>Extra Menu Button</h3><label>Menu Name</label><input id="emName" placeholder="New Menu"><label>Link</label><input id="emLink" placeholder="https://... or page.html"><div class="form-grid two"><div><label>Order</label><input id="emOrder" type="number" value="80"></div><div><label>Visible</label><select id="emVisible"><option value="true">Yes</option><option value="false">No</option></select></div></div><label>Target</label><select id="emTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select><button id="emSave" class="primary-btn">Save Menu</button><button id="emClear" class="secondary-btn">Clear</button></div><div class="manager-content"><div id="emList" class="content-grid"></div></div></div>
+</section>
+
+    <section id="recyclebinPage" class="page">
+      <div class="page-intro"><div><h2>♻ Recycle Bin</h2><p>Deleted CMS items ko Restore ya permanently delete karein.</p></div></div>
+      <div class="dashboard-information cms-summary">
+        <article class="dashboard-info-box"><h3>🛡️ Safe Delete</h3><p>Page aur Page Section delete hone par pehle yahan aayega.</p></article>
+        <article class="dashboard-info-box"><h3>↩ Restore</h3><p>Galti se delete hua item original collection me wapas bhejein.</p></article>
+      </div>
+      <div class="manager-content"><div class="toolbar"><input id="recycleSearch" type="search" placeholder="🔍 Search deleted items..."><select id="recycleFilter"><option value="all">All Types</option><option value="services">Services / Yojana / Divyang</option><option value="categories">Categories</option><option value="updates">Government Updates</option><option value="notifications">Notifications</option><option value="images">Images</option><option value="documents">Documents</option><option value="documentChecklists">Document Checklists</option><option value="youtube">YouTube</option><option value="siteSections">Custom Sections</option><option value="pageContent">Website Page Content</option><option value="themes">Themes</option><option value="dynamicPages">Pages</option><option value="dynamicSections">Page Sections</option><option value="menuItems">Menu Items</option><option value="adminMenu">Admin Menus</option><option value="adminPage">Admin Pages</option><option value="adminTheme">Admin Themes</option></select></div><div id="recycleList" class="content-grid"><div class="empty-state">Recycle Bin loading...</div></div></div>
+    </section>
+
+    <section id="themesPage" class="page">
+      <div class="page-intro"><div><h2>🎨 Theme Manager</h2><p>Professional website themes create, edit, apply, delete aur restore karein.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form">
+          <div class="form-title"><span>🎨</span><div><h3>Create / Edit Theme</h3><p>Pink + Blue default professional theme preserved.</p></div></div>
+          <label>Theme Name</label><input id="themeName" type="text" placeholder="Pink Blue Professional">
+          <div class="form-grid three"><div><label>Primary</label><input id="themePrimary2" type="color" value="#ec4899"></div><div><label>Secondary</label><input id="themeSecondary2" type="color" value="#2563eb"></div><div><label>Accent</label><input id="themeAccent2" type="color" value="#f59e0b"></div></div>
+          <div class="form-grid three"><div><label>Page Background</label><input id="themePageBg" type="color" value="#f8fafc"></div><div><label>Surface / Card</label><input id="themeSurface" type="color" value="#ffffff"></div><div><label>Text</label><input id="themeText" type="color" value="#132238"></div></div>
+          <div class="form-grid three"><div><label>Menu Background</label><input id="themeMenuBg" type="color" value="#172554"></div><div><label>Menu Text</label><input id="themeMenuText" type="color" value="#ffffff"></div><div><label>Menu Active</label><input id="themeMenuActive" type="color" value="#ec4899"></div></div>
+          <div class="form-grid three"><div><label>Footer</label><input id="themeFooter" type="color" value="#07182d"></div><div><label>Button Text</label><input id="themeButtonText" type="color" value="#ffffff"></div><div><label>Border</label><input id="themeBorder" type="color" value="#e2e8f0"></div></div>
+          <div class="form-grid two"><div><label>Card Radius</label><select id="themeRadius"><option value="14">14px</option><option value="20" selected>20px</option><option value="28">28px</option></select></div><div><label>Preferred Mode</label><select id="themeMode"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></div></div>
+          <div class="settings-actions"><button id="saveThemePreset" class="primary-btn" type="button">Save New Theme</button><button id="updateThemePreset" class="secondary-btn" type="button">Update Theme</button><button id="applyThemePreview" class="secondary-btn" type="button">Apply Current Values</button><button id="resetDefaultTheme" class="secondary-btn" type="button">Restore Pink + Blue Default</button></div>
+          <div id="themeManagerMessage" class="settings-message info">Theme Manager ready.</div>
+        </div>
+        <div class="manager-content"><div class="toolbar"><input id="themeSearch" type="search" placeholder="🔍 Search themes..."></div><div id="themePresetList" class="content-grid"><div class="empty-state">No saved themes.</div></div></div>
+      </div>
+    </section>
+
+
+<section id="applicationsPage" class="page">
+  <div class="page-intro"><div><h2>📝 Applications</h2><p>Sabhi customer applications yahan aayengi. Full form, payment, documents, status, rejection/resubmit aur completed files manage karein.</p></div><button class="secondary-btn" id="refreshApplications" type="button">↻ Refresh</button></div>
+  <div class="manager-content">
+    <div class="toolbar portal-toolbar"><input id="applicationSearch" type="search" placeholder="🔍 Application ID / Name / Mobile"><select id="applicationStatusFilter"><option value="all">All Status</option><option>Pending Payment</option><option>Pending</option><option>Processing</option><option>Need Documents</option><option>On Hold</option><option>Completed</option><option>Rejected</option><option>Payment Failed</option></select><select id="applicationPaymentFilter"><option value="all">All Payments</option><option value="Paid">Paid</option><option value="Pending">Pending</option><option value="Failed">Failed</option></select></div>
+    <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>Customer</th><th>Service</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>Documents</th><th>Action</th></tr></thead><tbody id="applicationsTable"><tr><td colspan="9">Loading...</td></tr></tbody></table></div>
+  </div>
+  <div id="applicationEditor" class="manager-content portal-editor" style="display:none">
+    <div class="box-heading"><div><span class="box-kicker">APPLICATION WORKFLOW</span><h2 id="applicationEditorTitle">Application</h2></div><button id="closeApplicationEditor" class="secondary-btn">Close</button></div>
+    <div class="form-grid three"><div><label>Status</label><select id="appStatus"><option>Pending Payment</option><option>Pending</option><option>Processing</option><option>Need Documents</option><option>On Hold</option><option>Completed</option><option>Rejected</option><option>Payment Failed</option></select></div><div><label>Payment Status</label><select id="appPaymentStatus"><option>Pending</option><option>Paid</option><option>Failed</option></select></div><div><label>Amount ₹</label><input id="appAmount" type="number" min="0"></div></div>
+    <label>User Message / Need Documents</label><textarea id="appUserMessage" placeholder="Address proof clear upload karein..."></textarea>
+    <label>Internal Admin Note</label><textarea id="appInternalNote" placeholder="Only admin can see this note"></textarea>
+    <label>Rejection Reason</label><textarea id="appRejectionReason" placeholder="Required when status is Rejected"></textarea>
+    <div class="form-grid two"><div><label>Completed Slip / PDF</label><input id="appCompletedUpload" type="file" accept="image/*,.pdf"><input id="appCompletedFile" type="url" placeholder="or paste https://..."></div><div><label>Status Screenshot / Final File</label><input id="appFinalUpload" type="file" accept="image/*,.pdf"><input id="appFinalFile" type="url" placeholder="or paste https://..."></div></div><div id="applicationDetailsBox" class="settings-message info">Customer form details and uploaded documents appear here.</div>
+    <div class="settings-actions"><button id="saveApplication" class="primary-btn">Save / Update Application</button><button id="markApplicationComplete" class="secondary-btn">Mark Completed</button><button id="printApplicationForm" class="secondary-btn" type="button">🖨 Print Full Form</button><button id="downloadApplicationPdf" class="secondary-btn" type="button">⬇ Download Full Form PDF</button></div>
+    <div id="applicationEditorMessage" class="settings-message info">Select an application.</div>
+  </div>
+</section>
+
+    <section id="passwordresetPage" class="page">
+<div class="page-intro"><div><h2>🔑 Password Reset Requests</h2><p>Normal User aur Commission User ke Forgot Password requests. Verify karke temporary password set karein.</p></div><button id="refreshPasswordRequests" class="secondary-btn" type="button">Refresh</button></div>
+<div class="manager-content"><div class="table-wrap"><table class="admin-table"><thead><tr><th>User</th><th>Mobile</th><th>Account Type</th><th>Requested</th><th>Status</th><th>Action</th></tr></thead><tbody id="passwordResetRequestsTable"><tr><td colspan="6">Loading...</td></tr></tbody></table></div><div id="passwordResetAdminMessage" class="settings-message info">Password reset requests ready.</div></div>
+<dialog id="passwordResetDialog" class="password-reset-dialog"><form method="dialog" class="password-reset-dialog-card"><div class="box-heading"><div><span class="box-kicker">ADMIN VERIFIED RESET</span><h2>Set Temporary Password</h2></div><button value="cancel" class="secondary-btn">✕</button></div><p id="passwordResetSelectedUser" class="field-help"></p><label>Temporary Password</label><div class="admin-password-wrap"><input id="temporaryPassword" type="password" minlength="6"><button type="button" class="admin-password-eye" data-admin-password-target="temporaryPassword">👁</button></div><p class="field-help">User temporary password se login karega aur next login par Change Password compulsory hoga.</p><div class="settings-actions"><button id="confirmTemporaryPassword" type="button" class="primary-btn">Reset Password</button><button value="cancel" class="secondary-btn">Cancel</button></div></form></dialog>
+</section>
+
+<section id="usersPage" class="page">
+  <div class="page-intro"><div><h2>👥 Users / Customers</h2><p>Sabhi registered users/customers yahan aayenge, profile aur application summary ke saath.</p></div></div>
+  <div class="manager-content"><div class="toolbar"><input id="userSearch" type="search" placeholder="🔍 Name / mobile / email"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Mobile</th><th>Email</th><th>Applications</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="usersTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
+</section>
+
+<section id="paymentsPage" class="page">
+  <div class="page-intro"><div><h2>💳 Payments / PayU</h2><p>Transactions read-only audit + secure PayU backend configuration.</p></div></div>
+  <div class="dashboard-cards"><article class="dashboard-stat-card green"><span class="stat-icon">₹</span><div><p>Total Collection</p><h2 id="paymentTotalCollection">₹0</h2></div></article><article class="dashboard-stat-card blue"><span class="stat-icon">✅</span><div><p>Success</p><h2 id="paymentSuccessCount">0</h2></div></article><article class="dashboard-stat-card yellow"><span class="stat-icon">⏳</span><div><p>Pending</p><h2 id="paymentPendingCount">0</h2></div></article><article class="dashboard-stat-card red"><span class="stat-icon">❌</span><div><p>Failed</p><h2 id="paymentFailedCount">0</h2></div></article></div>
+  <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>🔐</span><div><h3>PayU Integration</h3><p>Merchant Salt/Secret public JS ya database me save nahi hoga.</p></div></div><label>Environment</label><select id="payuEnvironment"><option value="test">Test</option><option value="production">Production</option></select><label>Merchant Key (public identifier)</label><input id="payuMerchantKey" placeholder="PayU merchant key"><label>Secure Backend Payment URL</label><input id="payuBackendUrl" type="url" placeholder="https://your-backend.example.com/api/payu"><label>Success URL</label><input id="payuSuccessUrl" type="url"><label>Failure URL</label><input id="payuFailureUrl" type="url"><label>Portal Return URL</label><input id="payuPortalReturnUrl" type="url" placeholder="https://test-domain/portal/my-applications.html"><div class="settings-message info">Customer-facing merchant/display name PayU Dashboard se set hota hai. Personal account-holder name ko checkout branding me use na karein.</div><div class="settings-actions"><button id="savePayuSettings" class="primary-btn">Save PayU Settings</button></div><div id="payuMessage" class="settings-message info">Secret/Salt must remain backend-only.</div></div><div class="manager-content"><h3>Transaction Records</h3><p class="field-help">Admin can permanently delete an individual transaction record when required.</p><div class="table-wrap"><table class="admin-table"><thead><tr><th>Payment ID</th><th>Application</th><th>Amount</th><th>Status</th><th>Reference</th><th>Date</th><th>Action</th></tr></thead><tbody id="paymentsTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div></div>
+</section>
+
+<section id="portalbuilderPage" class="page">
+  <div class="page-intro"><div><h2>🧩 Services, Actions & Forms</h2><p>Service category ke andar service, actions, charge, availability, required documents aur dynamic application form professionally manage karein.</p></div></div>
+  <div class="manager-content" style="margin-bottom:18px"><div class="box-heading"><div><span class="box-kicker">MASTER CATALOGUE</span><h2>📚 Complete Service Catalogue</h2><p class="field-help">Existing services ko preserve karke missing master services/actions/form fields add/sync karega. Duplicate names skip honge.</p></div></div><div class="settings-actions"><button id="installMasterCatalog" class="primary-btn" type="button">Install / Sync Complete Master Catalogue</button></div><div id="masterCatalogMessage" class="settings-message info">Installer ready. Existing prices/actions overwrite nahi honge.</div></div>
+  <div class="manager-layout portal-service-manager"><div class="manager-form"><div class="form-title"><span>🧰</span><div><h3>Add / Edit Service</h3><p>Existing ya new service ko yahin se manage karein.</p></div></div><label>Service Name</label><input id="builderServiceName" placeholder="PAN Card"><label>Description</label><textarea id="builderServiceDescription" placeholder="Service details"></textarea><div class="form-grid two"><div><label>Category</label><input id="builderServiceCategory" list="serviceCategoryOptions" value="Government" placeholder="Identity / KYC / Certificate"><datalist id="serviceCategoryOptions"></datalist><p class="field-help">Category yahin manage hogi; separate Service Categories menu ki zarurat nahi.</p></div><div><label>Icon / Emoji</label><input id="builderServiceIcon" placeholder="🧰"></div></div><div class="form-grid two"><div><label>Status</label><select id="builderServiceStatus"><option>Published</option><option>Draft</option></select></div><div><label>Availability</label><select id="builderServiceAvailability"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Open Target</label><select id="builderServiceTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div></div><div class="settings-actions"><button id="saveBuilderService" class="primary-btn" type="button">Add Service</button><button id="clearBuilderService" class="secondary-btn" type="button">Clear</button></div></div><div class="manager-content"><div class="box-heading"><div><span class="box-kicker">SERVICE CONTROL</span><h2>All Existing Services</h2></div></div><div class="toolbar"><input id="builderServiceSearch" type="search" placeholder="Search existing service"></div><div id="builderServicesList" class="content-grid"></div></div></div>
+  <div class="manager-content portal-az-manager"><div class="box-heading"><div><span class="box-kicker">A TO Z FULL CONTROL</span><h2>🛠 All Services + Actions + Charges</h2><p class="field-help">Har existing/new service, uske action, charge aur availability ka direct Edit / Update / Delete control. Master catalogue automatically sync hota rahega; existing custom prices overwrite nahi honge.</p></div></div><div class="toolbar"><input id="azSearch" type="search" placeholder="Search any service / action / category"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Category</th><th>Action</th><th>Charge ₹</th><th>Availability</th><th>Full Control</th></tr></thead><tbody id="serviceAtoZTable"><tr><td colspan="6">Loading complete service control...</td></tr></tbody></table></div></div>
+  <div class="manager-layout portal-action-manager"><div class="manager-form"><div class="form-title"><span>⚡</span><div><h3>Service Action</h3><p>Example: Voter ID → New Apply / Correction / Address Change.</p></div></div><label>Service</label><select id="actionService"></select><label>Action Name</label><input id="actionName" placeholder="New Apply"><div class="form-grid two"><div><label>Service Charge ₹</label><input id="actionCharge" type="number" min="0" value="0"></div><div><label>Official Fee ₹</label><input id="actionOfficialFee" type="number" min="0" value="0"></div></div><label>Description</label><textarea id="actionDescription"></textarea><label>Required Documents (one per line)</label><textarea id="actionDocuments" placeholder="Aadhaar\nPhoto\nSignature"></textarea><div class="form-grid two"><div><label>Availability</label><select id="actionAvailable"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Order</label><input id="actionOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveServiceAction" class="primary-btn">Save Action</button><button id="clearServiceAction" class="secondary-btn">Clear</button></div></div><div class="manager-content"><div class="toolbar"><select id="actionServiceFilter"><option value="all">All Services</option></select></div><div id="serviceActionsList" class="content-grid"></div></div></div>
+  <div class="manager-content portal-charge-manager"><div class="box-heading"><div><span class="box-kicker">PRICE CONTROL</span><h2>💰 All Service Charges — Edit / Update / Delete</h2><p class="field-help">Har existing service/action ka charge yahin se badlein. Update Charge save karega; Delete Charge sirf charge ko ₹0 karega, service/action ko delete nahi karega.</p></div></div><div class="toolbar"><select id="chargeServiceFilter"><option value="all">All Services</option></select><input id="chargeSearch" type="search" placeholder="Search service / action"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Action</th><th>Charge ₹</th><th>Availability</th><th>Control</th></tr></thead><tbody id="serviceChargesTable"><tr><td colspan="5">Loading charges...</td></tr></tbody></table></div></div>
+  <div class="manager-layout portal-form-builder"><div class="manager-form"><div class="form-title"><span>🧾</span><div><h3>Dynamic Form Field</h3><p>Selected service/action ke Apply form ke fields.</p></div></div><label>Action</label><select id="fieldAction"></select><label>Field Label</label><input id="fieldLabel" placeholder="Full Name"><label>Field Type</label><select id="fieldType"><option value="text">Text</option><option value="number">Number</option><option value="date">Date</option><option value="email">Email</option><option value="select">Dropdown</option><option value="checkbox">Checkbox</option><option value="file">File Upload</option></select><label>Options (dropdown, comma separated)</label><input id="fieldOptions"><label>Auto-fill from User Profile</label><select id="fieldProfileKey"><option value="">Auto Detect / None</option><option value="fullName">Full Name</option><option value="email">Email</option><option value="mobile">Mobile</option><option value="dob">Date of Birth</option><option value="gender">Gender</option><option value="address">Full Address</option><option value="villageCity">Village / City</option><option value="taluka">Taluka</option><option value="district">District</option><option value="state">State</option><option value="pinCode">PIN Code</option></select><div class="form-grid two"><div><label>Required</label><select id="fieldRequired"><option value="true">Required</option><option value="false">Optional</option></select></div><div><label>Order</label><input id="fieldOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveFormField" class="primary-btn">Save Field</button><button id="clearFormField" class="secondary-btn">Clear</button></div></div><div class="manager-content"><h3>Form Fields</h3><div id="formFieldsList" class="content-grid"></div></div></div>
+</section>
+
+<section id="servicesmanagerPage" class="page">
+  <div class="page-intro"><div><h2>🧰 Services</h2><p>Sabhi existing aur new services ka Add / Edit / Update / Delete, category, target, status aur availability.</p></div></div>
+  <div id="servicesCategoryCards" class="svc-cat-wrap"></div><div id="servicesmanagerMount"></div>
+</section>
+
+<section id="actionsmanagerPage" class="page">
+  <div class="page-intro"><div><h2>⚡ Actions</h2><p>Har service ke sab existing/new actions ka Add / Edit / Update / Delete, charge, documents aur availability.</p></div></div>
+  <div id="actionsCategoryCards" class="svc-cat-wrap"></div><div id="actionsmanagerMount"></div>
+</section>
+
+<section id="formsmanagerPage" class="page">
+  <div class="page-intro"><div><h2>🧾 Forms</h2><p>Sabhi application form fields aur required documents ko full control ke saath manage karein.</p></div></div>
+  <div id="formsCategoryCards" class="svc-cat-wrap"></div><div id="formsmanagerMount"></div>
+  <div class="manager-layout" style="margin-top:18px">
+    <div class="manager-form"><div class="form-title"><span>📎</span><div><h3>Required Documents</h3><p>Selected action ke document upload list me add/remove/update.</p></div></div>
+      <label>Action</label><select id="v30DocsAction"></select>
+      <label>Required Documents (one per line)</label><textarea id="v30DocsText" rows="10" placeholder="Aadhaar Front\nAadhaar Back\nPhoto\nSignature"></textarea>
+      <div class="settings-actions"><button id="v30SaveDocs" class="primary-btn" type="button">Save / Update Documents</button><button id="v30ClearDocs" class="secondary-btn" type="button">Clear</button></div>
+      <div id="v30DocsMessage" class="settings-message info">Select an action.</div>
+    </div>
+    <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">DOCUMENT CONTROL</span><h2>Action Document Requirements</h2></div></div><div id="v30DocsPreview" class="content-grid"></div></div>
+  </div>
+</section>
+
+<section id="servicechargesPage" class="page">
+  <div class="page-intro"><div><h2>💰 Service Charges</h2><p>Sabhi existing aur future service actions ke charges ko ek jagah Edit / Update / ₹0 karein.</p></div></div>
+  <div id="chargesCategoryCards" class="svc-cat-wrap"></div><div id="servicechargesMount"></div>
+</section>
+
+    <section id="allchargePage" class="page">
+  <div class="page-intro"><div><h2>💵 All Charge</h2><p>Sabhi existing Services / Actions ke charges ek jagah Add / Edit / Update / Delete karein.</p></div></div>
+  <div id="allChargesCategoryCards" class="svc-cat-wrap"></div>
+  <div class="manager-content">
+    <div class="box-heading"><div><span class="box-kicker">ALL SERVICE CHARGES</span><h2>Service-wise Charge Manager</h2><p class="field-help">Charge serviceActions ke existing record par save hota hai. Isliye change User Application / Payment me wahi live charge use karega.</p></div></div>
+    <div class="toolbar">
+      <select id="allChargeAddAction"><option value="">Select Service / Action</option></select>
+      <input id="allChargeAddAmount" type="number" min="0" step="0.01" placeholder="Charge ₹">
+      <button id="allChargeAddBtn" class="primary-btn" type="button"><i class="fa-solid fa-plus"></i> Add Charge</button>
+    </div>
+    <div class="toolbar">
+      <input id="allChargeSearch" type="search" placeholder="Search service / action">
+      <button id="allChargeSaveAll" class="primary-btn" type="button"><i class="fa-solid fa-floppy-disk"></i> Save All Changes</button>
+    </div>
+    <div id="allChargeMessage" class="settings-message info">Charges loading...</div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>#</th><th>Service Name</th><th>Action</th><th>Current Charge ₹</th><th>Edit Charge ₹</th><th>Availability</th><th>Action</th></tr></thead>
+        <tbody id="allChargeTable"><tr><td colspan="7">Loading charges...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="userportalcmsPage" class="page">
+ <div class="page-intro"><div><h2>🌐 Website CMS</h2><p>New website / user portal ke profile fields, auto-fill aur user menu ko code chhede bina manage karein.</p></div></div>
+ <div class="manager-layout">
+  <div class="manager-form"><div class="form-title"><span>🧾</span><div><h3>Add / Edit Profile Field</h3><p>Existing + new profile details. Application auto-fill ke liye key use hoti hai.</p></div></div>
+   <label>Field Label</label><input id="upFieldLabel" placeholder="Father Name">
+   <div class="form-grid two"><div><label>Profile Key</label><input id="upFieldKey" placeholder="fatherName"></div><div><label>Type</label><select id="upFieldType"><option value="text">Text</option><option value="email">Email</option><option value="tel">Mobile</option><option value="date">Date</option><option value="select">Dropdown</option><option value="textarea">Textarea</option></select></div></div>
+   <label>Dropdown Options (comma separated)</label><input id="upFieldOptions" placeholder="Male, Female, Other">
+   <div class="form-grid three"><div><label>Required</label><select id="upFieldRequired"><option value="false">Optional</option><option value="true">Required</option></select></div><div><label>Visible</label><select id="upFieldVisible"><option value="true">Show</option><option value="false">Hide</option></select></div><div><label>Order</label><input id="upFieldOrder" type="number" value="120"></div></div>
+   <div class="settings-actions"><button id="upSaveField" class="primary-btn" type="button">Add Profile Field</button><button id="upClearField" class="secondary-btn" type="button">Clear</button></div>
+  </div>
+  <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">FULL CONTROL</span><h2>All Profile Fields</h2></div><button id="upResetFields" class="secondary-btn" type="button">Restore Defaults</button></div><p class="field-help">Add / Edit / Update / Delete-Hide / Required / Order. Mobile login field protected rahega.</p><div id="upFieldsList" class="content-grid"></div></div>
+ </div>
+ <div class="manager-layout">
+  <div class="manager-form"><div class="form-title"><span>☰</span><div><h3>Add / Edit User Menu</h3><p>Existing + new sidebar menu ka label, icon, link, target, order aur visibility.</p></div></div><label>Menu Label</label><input id="upMenuLabel" placeholder="Support"><label>Icon / Emoji</label><input id="upMenuIcon" value="🔗"><label>Link</label><input id="upMenuHref" placeholder="help.html"><div class="form-grid three"><div><label>Target</label><select id="upMenuTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div><div><label>Order</label><input id="upMenuOrder" type="number" value="80"></div><div><label>Visible</label><select id="upMenuVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div><div class="settings-actions"><button id="upAddMenu" class="primary-btn" type="button">Add Menu</button><button id="upClearMenu" class="secondary-btn" type="button">Clear</button></div></div>
+  <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">CLEAN SIDEBAR</span><h2>User Sidebar Menu</h2></div><button id="upResetMenu" class="secondary-btn" type="button">Restore Defaults</button></div><p class="field-help">Existing top-level menu name/order/show-hide edit karein. Services aur Documents ke submenu automatically grouped rahenge.</p><div id="upMenuList" class="admin-editor-list"></div></div>
+ </div>
+ <div class="manager-layout">
+  <div class="manager-form"><div class="form-title"><span>📄</span><div><h3>User Pages CMS</h3><p>Existing/new custom user page Add / Edit / Update / Delete-Hide.</p></div></div>
+    <label>Page Title</label><input id="upPageTitle" placeholder="Help Centre">
+    <label>Page Icon / Emoji</label><input id="upPageIcon" value="📄">
+    <label>Page Content (HTML allowed)</label><textarea id="upPageContent" rows="10" placeholder="Page content..."></textarea>
+    <div class="form-grid two"><div><label>Order</label><input id="upPageOrder" type="number" value="100"></div><div><label>Visible</label><select id="upPageVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+    <div class="settings-actions"><button id="upSavePage" class="primary-btn" type="button">Add Page</button><button id="upClearPage" class="secondary-btn" type="button">Clear</button></div>
+  </div>
+  <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">USER PAGES</span><h2>All Custom Pages</h2></div></div><div id="upPagesList" class="content-grid"></div></div>
+ </div>
+ <div id="upMessage" class="settings-message info">Website CMS ready.</div>
+</section>
+
+<section id="settingsPage" class="page">
+      <div class="page-intro"><div><h2>⚙️ Website Settings</h2><p>Changes saved here are designed to update the public website automatically.</p></div></div>
+      <div class="settings-shell">
+        <div class="settings-group"><h3>🏢 Business Identity</h3><div class="form-grid two"><div><label>Website Name</label><input type="text" id="siteName" placeholder="Khobragade Computer Service Centre"></div><div><label>Tagline</label><input type="text" id="tagline" placeholder="CSC Digital Seva & Government Services"></div></div><div class="form-grid two"><div><label>Admin Email</label><input type="email" id="adminEmail" placeholder="admin@example.com"></div><div><label>Address</label><input type="text" id="address" placeholder="Nagpur, Maharashtra, India"></div></div><label>Logo URL</label><input type="url" id="logoUrl" placeholder="https://..."></div>
+        <div class="settings-group"><h3>📞 Contact & Social</h3><div class="form-grid two"><div><label>Contact Number</label><input type="text" id="contactNumber" placeholder="9637832490"></div><div><label>WhatsApp Number</label><input type="text" id="whatsappNumber" placeholder="9637832490"></div></div><label>YouTube Channel</label><input type="url" id="youtubeChannel" placeholder="https://youtube.com/@yourchannel"><div class="form-grid three"><div><label>Facebook</label><input type="url" id="facebook"></div><div><label>Instagram</label><input type="url" id="instagram"></div><div><label>Telegram</label><input type="url" id="telegram"></div></div></div>
+        <div class="settings-group"><h3>🌐 Homepage Text</h3><label>Hero Title</label><input type="text" id="heroTitle" placeholder="Khobragade Computer Service Centre"><label>Hero Subtitle</label><textarea id="heroSubtitle" placeholder="Professional digital service assistance"></textarea><label>Home About Title</label><input type="text" id="homeAboutTitle" placeholder="Khobragade Computer Service Centre"><label>Home About Details</label><textarea id="homeAboutText" placeholder="Centre / website details"></textarea><label>Footer Text</label><input type="text" id="footerText" placeholder="© 2026 All Rights Reserved"></div>
+        <div class="settings-group"><h3>🎨 Public Website Theme</h3>
+<div class="form-grid three">
+<div><label>Primary Pink</label><input type="color" id="themePrimary" value="#ec4899"></div>
+<div><label>Primary Blue</label><input type="color" id="themeSecondary" value="#2563eb"></div>
+<div><label>Default Mode</label><select id="defaultMode"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></div>
+</div>
+<div class="form-grid two"><div><label>Menu Background</label><input type="color" id="menuColor" value="#172554"></div><div><label>Card Radius</label><select id="cardRadius"><option value="14">14px</option><option value="20">20px</option><option value="28">28px</option></select></div></div>
+<p class="field-help">Pink + Blue default professional theme hai. Save karte hi public website update hogi.</p>
+</div>
+<div class="settings-group"><h3>🌐 Language & Media</h3>
+<div class="form-grid two"><div><label>Default Language</label><select id="defaultLanguage"><option value="en">English</option><option value="hi">Hindi</option><option value="mr">Marathi</option></select></div><div><label>Hero / Banner Image URL</label><input type="url" id="heroImageUrl" placeholder="https://..."></div></div>
+<label>Header Logo URL</label><input type="url" id="logoUrlCms" placeholder="https://... (same as Logo URL)">
+<p class="field-help">Visitors header se English / हिंदी / मराठी aur Light / Dark change kar sakte hain.</p>
+</div>
+<div class="settings-group"><h3>🛠 Data Recovery & Sync</h3>
+<p class="field-help">Existing Services se Categories rebuild karein; Settings me saved logo/banner ko Images Manager me recover karein. Existing database data duplicate nahi hoga.</p>
+<div class="settings-actions"><button id="recoverCategories" class="secondary-btn" type="button">Recover Categories from Services</button><button id="recoverImages" class="secondary-btn" type="button">Recover Logo / Banner Images</button><button id="syncDashboardCounts" class="secondary-btn" type="button">Refresh Dashboard Counts</button></div>
+<div id="recoveryMessage" class="settings-message info">Recovery ready.</div></div>
+<div id="settingsMessage" class="settings-message info">Settings ready.</div>
+        <div class="settings-actions"><button id="saveSettings" class="primary-btn" type="button">Save Website Settings</button><button id="resetSettings" class="secondary-btn" type="button">Reset Form</button></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="dashboard.js"></script>
+<script type="module" src="updates.js"></script>
+<script type="module" src="services.js?v=20260821-final24r3"></script>
+<script type="module" src="categories.js"></script>
+<script type="module" src="notification.js?v=20260821-final24r3"></script>
+<script type="module" src="analytics.js"></script>
+<script type="module" src="seo-manager.js"></script>
+<script type="module" src="admin-editor.js"></script>
+<script type="module" src="button-manager.js"></script>
+<script type="module" src="menu.js"></script>
+<script type="module" src="images.js"></script>
+<script type="module" src="documents.js"></script>
+<script type="module" src="youtube.js?v=20260821-final24r3"></script>
+<script type="module" src="settings.js"></script>
+<script type="module" src="page-manager.js"></script>
+<script type="module" src="site-builder.js"></script>
+<script type="module" src="checklists.js"></script>
+<script type="module" src="dynamic-pages.js"></script>
+<script type="module" src="recycle-bin.js"></script>
+<script type="module" src="theme-manager.js"></script>
+<script type="module" src="data-recovery.js"></script>
+<script type="module" src="commission-admin.js?v=20260825-v25restore"></script>
+<script type="module" src="password-reset-admin.js?v=20260825-v25restore"></script>
+<script type="module" src="all-charge.js?v=20260825-v25restore"></script>
+<script type="module" src="applications-admin.js?v=20260821-final24r3"></script>
+<script type="module" src="users-admin.js?v=20260819-final11"></script>
+<script type="module" src="payments-admin.js?v=20260819-final11"></script>
+<script type="module" src="portal-builder.js?v=20260821-final24r3"></script>
+<script type="module" src="user-portal-cms.js?v=20260821-v30"></script>
+<script type="module" src="admin-v30.js?v=20260821-v30"></script>
+<script src="admin-pwa.js?v=20260821-v30"></script>
+<script>window.addEventListener("load",()=>document.documentElement.classList.remove("admin-shell-wait"),{once:true});setTimeout(()=>document.documentElement.classList.remove("admin-shell-wait"),4000);</script>
+<script type="module" src="maintenance-admin.js?v=20260831-final"></script>
+</body>
+</html>
